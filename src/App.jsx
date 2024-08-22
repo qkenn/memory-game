@@ -20,8 +20,11 @@ function App() {
 
     async function fetchData() {
       try {
+        // random data on every mount
+        // rickandmorty api paginates 20 items per page by default
+        // https://rickandmortyapi.com/api/character
         const res = await fetch(
-          'https://rickandmortyapi.com/api/character/?page=2',
+          `https://rickandmortyapi.com/api/character/?page=${genRandomInt()}`,
           {
             signal: controller.signal,
           }
@@ -85,9 +88,9 @@ function App() {
     return arrCopy;
   }
 
-  // function geneRandomInt(min = 1, max = 40) {
-  //   return Math.floor(Math.random() * (max - min + 1)) + min;
-  // }
+  function genRandomInt(min = 1, max = 40) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
   function handleClick() {
     const shuffledArr = shuffle([...initialData]);
