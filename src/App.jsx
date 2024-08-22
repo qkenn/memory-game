@@ -6,15 +6,24 @@ import Spinner from './components/Spinner';
 import Header from './components/Header';
 
 function App() {
-  const [initialData, setInitialData] = useState(null);
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(null);
+  // const [score, setScore] = useState(0);
+  // const [selectedCards, setSelectedCards] = useState([]);
+
+  const [scoreBoard, setScoreBoard] = useState({
+    score: 0,
+    highScore: 0,
+    selectedCards: [],
+  });
+  const [gameOver, setGameOver] = useState(false);
 
   useEffect(() => {
     // set loadning and error to initial values
     setLoading(true);
     setErr(null);
-    setInitialData(null);
+    setData(null);
 
     const controller = new AbortController();
 
@@ -24,7 +33,7 @@ function App() {
         // rickandmorty api paginates 20 items per page by default
         // https://rickandmortyapi.com/api/character
         const res = await fetch(
-          `https://rickandmortyapi.com/api/character/?page=${genRandomInt()}`,
+          `https://rickandmortyapi.com/api/character/?page=29`,
           {
             signal: controller.signal,
           }
@@ -40,7 +49,7 @@ function App() {
         console.log(data);
 
         const cards = generateCards(data.results);
-        setInitialData(cards);
+        setData(cards);
       } catch (e) {
         // exclude manual abort
         if (e?.name == 'AbortError') return;
@@ -92,24 +101,48 @@ function App() {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  function handleClick() {
-    const shuffledArr = shuffle([...initialData]);
+  function playRound(id) {
+    if (gameOver) return;
 
-    setInitialData(shuffledArr);
+    shuffleCards();
+
+    updateGame(id);
+  }
+
+  function updateGame(id) {
+    if (!scoreBoard.selectedCards.includes(id)) {
+      setScoreBoard((prev) => {
+        const selectedCards = [...prev.selectedCards, id];
+        return { ...prev, score: prev.score + 1, selectedCards };
+      });
+    } else {
+      setScoreBoard((prev) => {
+        return { ...prev, highScore: scoreBoard.score };
+      });
+      setGameOver(true);
+    }
+  }
+
+  function shuffleCards() {
+    const shuffledArr = shuffle([...data]);
+    setData(shuffledArr);
   }
 
   return (
     <>
-      <Header />
+      <Header
+        scores={{ score: scoreBoard.score, highScore: scoreBoard.highScore }}
+        gameOver={gameOver}
+      />
 
-      <section className="mx-auto my-10 max-w-[90rem]">
+      <main className="mx-auto my-10 max-w-[90rem]">
         {loading && <Spinner />}
 
         {err && <Err message={err} />}
 
-        {initialData && (
-          <ul className="grid auto-rows-[minmax(10rem,_auto)] grid-cols-[repeat(auto-fit,_minmax(16rem,_1fr))] gap-12 px-5">
-            {initialData.map((el) => {
+        {data && (
+          <ul className="grid auto-rows-[minmax(10rem,_auto)] grid-cols-[repeat(auto-fit,_minmax(16rem,_1fr))] gap-20 px-5">
+            {data.map((el) => {
               let statusColor;
 
               // reason
@@ -132,7 +165,7 @@ function App() {
                 <li
                   key={el.id}
                   className="flex flex-col overflow-hidden rounded-xl bg-neutral-800 text-white"
-                  onClick={handleClick}
+                  onClick={() => playRound(el.id)}
                 >
                   <div>
                     <img
@@ -157,7 +190,7 @@ function App() {
             })}
           </ul>
         )}
-      </section>
+      </main>
     </>
   );
 }
