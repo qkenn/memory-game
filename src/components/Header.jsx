@@ -1,4 +1,4 @@
-function Header({ scores, gameOver }) {
+function Header({ scores, gameOver, replayHandler }) {
   return (
     <>
       <header className="text-center">
@@ -7,6 +7,15 @@ function Header({ scores, gameOver }) {
           Score: {scores.score} HighScore: {scores.highScore}
         </p>
         {gameOver && <p>Game Over; You already selected that card</p>}
+        {gameOver && (
+          <button
+            className="mt-5 rounded-xl bg-neutral-800 px-5 py-2 text-white"
+            r
+            onClick={replayHandler}
+          >
+            Replay
+          </button>
+        )}
       </header>
     </>
   );

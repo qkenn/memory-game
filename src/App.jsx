@@ -123,6 +123,14 @@ function App() {
     }
   }
 
+  function replay() {
+    setGameOver(false);
+
+    setScoreBoard((prev) => {
+      return { ...prev, score: 0, selectedCards: [] };
+    });
+  }
+
   function shuffleCards() {
     const shuffledArr = shuffle([...data]);
     setData(shuffledArr);
@@ -133,6 +141,7 @@ function App() {
       <Header
         scores={{ score: scoreBoard.score, highScore: scoreBoard.highScore }}
         gameOver={gameOver}
+        replayHandler={replay}
       />
 
       <main className="mx-auto my-10 max-w-[90rem]">
