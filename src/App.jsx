@@ -30,6 +30,8 @@ function App() {
 
         // generate cards with fetched data
         const data = await res.json();
+        console.log(data);
+
         const cards = generateCards(data.results);
         setInitialData(cards);
       } catch (e) {
@@ -94,15 +96,25 @@ function App() {
         {err && <Err message={err} />}
 
         {initialData && (
-          <ul className="grid grid-cols-3 gap-3">
+          <ul className="grid auto-rows-[minmax(10rem,_auto)] grid-cols-[repeat(auto-fit,_minmax(30rem,_1fr))] gap-12 px-5">
             {initialData.map((el) => {
               return (
                 <li
                   key={el.name}
-                  className="flex items-center justify-center bg-slate-100 p-3"
+                  className="flex gap-5 overflow-hidden rounded-xl bg-neutral-800 text-white"
                   onClick={handleClick}
                 >
-                  {el.name}
+                  <div>
+                    <img src={el.image} />
+                  </div>
+
+                  <div className="p-4">
+                    <h3 className="text-2xl font-medium">{el.name}</h3>
+                    <p>
+                      {el.status} - {el.species}
+                    </p>
+                    <p>{el.location}</p>
+                  </div>
                 </li>
               );
             })}
