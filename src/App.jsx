@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import './index.css';
 
+import Err from './components/Err';
+import Spinner from './components/Spinner';
+import Header from './components/Header';
+
 function App() {
   const [initialData, setInitialData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,7 +25,7 @@ function App() {
 
         // manualy handle errors
         if (res.status != 200) {
-          throw new Error('There was an error');
+          throw new Error('Error Fetching Data');
         }
 
         // generate cards with fetched data
@@ -34,7 +38,6 @@ function App() {
 
         setErr(e.message);
       } finally {
-        // set loading to false regardless of success or failure
         setLoading(false);
       }
     }
@@ -83,12 +86,12 @@ function App() {
 
   return (
     <>
-      <h1 className="bg-red-200 text-lg">Changing grid</h1>
+      <Header />
 
       <section className="mx-auto my-10 max-w-[90rem]">
-        {loading && <p>Loading</p>}
+        {loading && <Spinner />}
 
-        {err && <p>{err}</p>}
+        {err && <Err message={err} />}
 
         {initialData && (
           <ul className="grid grid-cols-3 gap-3">
@@ -96,7 +99,7 @@ function App() {
               return (
                 <li
                   key={el.name}
-                  className="flex items-center justify-center bg-red-100 p-3"
+                  className="flex items-center justify-center bg-slate-100 p-3"
                   onClick={handleClick}
                 >
                   {el.name}
