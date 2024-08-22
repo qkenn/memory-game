@@ -1,14 +1,70 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './index.css';
 
 function App() {
-  const [initialData, setInitialData] = useState([
-    { id: 1 },
-    { id: 2 },
-    { id: 3 },
-    { id: 4 },
-    { id: 5 },
-  ]);
+  const [initialData, setInitialData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState(null);
+
+  useEffect(() => {
+    // set loadning and error to initial values
+    setLoading(true);
+    setErr(null);
+
+    const controller = new AbortController();
+
+    async function fetchData() {
+      try {
+        const res = await fetch('https://rickandmortyapi.com/api/character', {
+          signal: controller.signal,
+        });
+
+        // manualy handle errors
+        if (res.status != 200) {
+          throw new Error('There was an error');
+        }
+
+        // generate cards with fetched data
+        const data = await res.json();
+        const cards = generateCards(data.results);
+        setInitialData(cards);
+      } catch (e) {
+        // exclude manual abort
+        if (e?.name == 'AbortError') return;
+
+        setErr(e.message);
+      } finally {
+        // set loading to false regardless of success or failure
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
+
+  function generateCards(data) {
+    const cards = [];
+
+    data.forEach((entry) => {
+      const clone = {};
+
+      // get selected properties and values
+      clone.id = entry.id;
+      clone.name = entry.name;
+      clone.status = entry.status;
+      clone.species = entry.species;
+      clone.location = entry.location.name;
+      clone.image = entry.image;
+
+      cards.push(clone);
+    });
+
+    return cards;
+  }
 
   function shuffle(arr) {
     const arrCopy = [...arr];
@@ -30,19 +86,25 @@ function App() {
       <h1 className="bg-red-200 text-lg">Changing grid</h1>
 
       <section className="mx-auto my-10 max-w-[90rem]">
-        <ul className="grid grid-cols-3 gap-3">
-          {initialData.map((el) => {
-            return (
-              <li
-                key={el.id}
-                className="flex items-center justify-center bg-red-100 p-3"
-                onClick={handleClick}
-              >
-                {el.id}
-              </li>
-            );
-          })}
-        </ul>
+        {loading && <p>Loading</p>}
+
+        {err && <p>{err}</p>}
+
+        {initialData && (
+          <ul className="grid grid-cols-3 gap-3">
+            {initialData.map((el) => {
+              return (
+                <li
+                  key={el.name}
+                  className="flex items-center justify-center bg-red-100 p-3"
+                  onClick={handleClick}
+                >
+                  {el.name}
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </section>
     </>
   );
