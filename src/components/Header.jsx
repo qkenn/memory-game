@@ -3,9 +3,7 @@ function Header({ scores, gameOver, replayHandler }) {
     <>
       <header className="text-center">
         <h1 className="my-12 text-5xl font-bold">Memory Game</h1>
-        <p className="text-xl">
-          Score: {scores.score} HighScore: {scores.highScore}
-        </p>
+        <p className="text-xl">Score: {scores.score}</p>
         {gameOver && <p>Game Over; You already selected that card</p>}
         {gameOver && (
           <button

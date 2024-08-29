@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { shuffle, generateCards, genRandomInt } from './scripts/helpers';
 import './index.css';
 
 import Err from './components/Err';
@@ -6,50 +7,42 @@ import Spinner from './components/Spinner';
 import Header from './components/Header';
 
 function App() {
-  const [data, setData] = useState(null);
+  const [fetchedData, setFetchedData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(null);
-  // const [score, setScore] = useState(0);
-  // const [selectedCards, setSelectedCards] = useState([]);
-
-  const [scoreBoard, setScoreBoard] = useState({
+  const [gameData, setGameData] = useState({
     score: 0,
-    highScore: 0,
     selectedCards: [],
   });
   const [gameOver, setGameOver] = useState(false);
 
   useEffect(() => {
-    // set loadning and error to initial values
+    // set loading and error to initial values
     setLoading(true);
     setErr(null);
-    setData(null);
+    setFetchedData(null);
 
     const controller = new AbortController();
 
     async function fetchData() {
       try {
-        // random data on every mount
         // rickandmorty api paginates 20 items per page by default
         // https://rickandmortyapi.com/api/character
-        const res = await fetch(
-          `https://rickandmortyapi.com/api/character/?page=29`,
-          {
-            signal: controller.signal,
-          }
-        );
+        const res = await fetch(`https://rickandmortyapi.com/api/character`, {
+          signal: controller.signal,
+        });
 
         // manualy handle errors
         if (res.status != 200) {
           throw new Error('Error Fetching Data');
         }
 
-        // generate cards with fetched data
         const data = await res.json();
         console.log(data);
 
+        // generate cards with fetched fetchedData
         const cards = generateCards(data.results);
-        setData(cards);
+        setFetchedData(cards);
       } catch (e) {
         // exclude manual abort
         if (e?.name == 'AbortError') return;
@@ -67,79 +60,55 @@ function App() {
     };
   }, []);
 
-  function generateCards(data) {
-    const cards = [];
-
-    data.forEach((character) => {
-      const clone = {};
-
-      // get selected properties and values
-      clone.id = character.id;
-      clone.name = character.name;
-      clone.status = character.status;
-      clone.type = character.type;
-      clone.species = character.species;
-      clone.location = character.location.name;
-      clone.image = character.image;
-
-      cards.push(clone);
-    });
-
-    return cards;
-  }
-
-  function shuffle(arr) {
-    const arrCopy = [...arr];
-    for (let i = arrCopy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arrCopy[i], arrCopy[j]] = [arrCopy[j], arrCopy[i]];
-    }
-    return arrCopy;
-  }
-
-  function genRandomInt(min = 1, max = 40) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
   function playRound(id) {
     if (gameOver) return;
 
     shuffleCards();
 
     updateGame(id);
+    console.log(id);
   }
 
   function updateGame(id) {
-    if (!scoreBoard.selectedCards.includes(id)) {
-      setScoreBoard((prev) => {
-        const selectedCards = [...prev.selectedCards, id];
-        return { ...prev, score: prev.score + 1, selectedCards };
-      });
+    if (!gameData.selectedCards.includes(id)) {
+      updateGameData(id);
     } else {
-      setScoreBoard((prev) => {
-        return { ...prev, highScore: scoreBoard.score };
-      });
-      setGameOver(true);
+      lose();
     }
+  }
+
+  function updateGameData(id) {
+    setGameData((prev) => {
+      const selectedCards = [...prev.selectedCards, id];
+      return { ...prev, score: prev.score + 1, selectedCards };
+    });
+  }
+
+  function lose() {
+    // setGameData((prev) => {
+    //   return { ...prev, wins: prev.wins + 1 };
+    // });
+
+    setGameOver(true);
   }
 
   function replay() {
     setGameOver(false);
 
-    setScoreBoard((prev) => {
+    setGameData((prev) => {
       return { ...prev, score: 0, selectedCards: [] };
     });
   }
 
   function shuffleCards() {
-    const shuffledArr = shuffle([...data]);
-    setData(shuffledArr);
+    const shuffledArr = shuffle([...fetchedData]);
+    setFetchedData(shuffledArr);
   }
 
   return (
     <>
       <Header
-        scores={{ score: scoreBoard.score, highScore: scoreBoard.highScore }}
+        scores={{ score: gameData.score }}
         gameOver={gameOver}
         replayHandler={replay}
       />
@@ -149,12 +118,11 @@ function App() {
 
         {err && <Err message={err} />}
 
-        {data && (
+        {fetchedData && (
           <ul className="grid auto-rows-[minmax(10rem,_auto)] grid-cols-[repeat(auto-fit,_minmax(16rem,_1fr))] gap-20 px-5">
-            {data.map((el) => {
+            {fetchedData.map((el) => {
               let statusColor;
 
-              // reason
               // tailwind does not allow dynamic classes
               switch (el.status) {
                 case 'unknown':
