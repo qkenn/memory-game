@@ -72,11 +72,6 @@ function App() {
   }, [refetch]);
 
   function handleDifficulty(value) {
-    if (!data) {
-      setGameState('play');
-      setFetchErr('error fetching data');
-      return;
-    }
     setCards(data);
     setCards(generateCards(data.results, +value));
     setGameState('play');
@@ -90,7 +85,6 @@ function App() {
     if (gameData.selectedCards.includes(id)) {
       console.log('you already selected that card');
       setGameState('gameover');
-      setRefetch(true);
       setGameData({ selectedCards: [], currentLevelValue: 8, score: 0 });
       return;
     }
@@ -98,7 +92,6 @@ function App() {
     if (gameData.selectedCards.length === gameData.currentLevelValue - 1) {
       setGameState('win');
       setGameData({ selectedCards: [], currentLevelValue: 8, score: 0 });
-      setRefetch(true);
       return;
     }
 
@@ -116,6 +109,7 @@ function App() {
   }
 
   function restart() {
+    setRefetch(true);
     setGameState('intro');
   }
 

@@ -1,4 +1,8 @@
+import { useState } from 'react';
+
 function Card({ character, handlePlayGame }) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   let statusColor;
 
   // tailwind does not allow dynamic classes
@@ -18,11 +22,15 @@ function Card({ character, handlePlayGame }) {
 
   return (
     <li
-      className="flex cursor-pointer flex-col overflow-hidden rounded-xl bg-neutral-800 text-white transition-shadow hover:shadow-[0_0_30px_1px_#4ade80]"
+      className="flex cursor-pointer flex-col self-start overflow-hidden rounded-xl bg-neutral-800 text-white transition-shadow hover:shadow-[0_0_30px_1px_#4ade80]"
       onClick={() => handlePlayGame(character.id)}
     >
       <div>
-        <img src={character.image} className="h-full w-full object-cover" />
+        <img
+          src={character.image}
+          className={`h-full w-full object-cover transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+          onLoad={() => setImageLoaded(true)}
+        />
       </div>
 
       <div className="p-4 text-center">
