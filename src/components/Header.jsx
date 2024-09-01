@@ -1,20 +1,17 @@
-function Header({ gameOver, replayHandler }) {
+function Header() {
   return (
     <>
       <header className="text-center">
         <h1 className="my-12 inline-block rounded-lg bg-neutral-800 px-10 py-2 text-5xl font-bold text-green-400">
           Memory Game
         </h1>
-        {gameOver && <p>Game Over; You already selected that card</p>}
-        {gameOver && (
-          <button
-            className="mt-5 rounded-xl bg-neutral-800 px-5 py-2 text-white"
-            r
-            onClick={replayHandler}
-          >
-            Replay
-          </button>
-        )}
+        {/* <p>Game Over; You already selected that card</p>
+        <button
+          className="mt-5 rounded-xl bg-neutral-800 px-5 py-2 text-white"
+          r
+        >
+          Replay
+        </button> */}
       </header>
     </>
   );

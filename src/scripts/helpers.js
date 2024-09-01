@@ -7,25 +7,23 @@ export function shuffle(arr) {
   return arrCopy;
 }
 
-export function generateCards(fetchedData, limit = 8) {
-  let count = 0;
+export function generateCards(data, limit = 8) {
   const cards = [];
 
-  fetchedData.forEach((character) => {
+  for (let i = 1; i <= data.length; i++) {
+    if (i > limit) break;
+
     const clone = {
-      id: character.id,
-      name: character.name,
-      status: character.status,
-      type: character.type,
-      species: character.species,
-      image: character.image,
+      id: data[i].id,
+      name: data[i].name,
+      status: data[i].status,
+      type: data[i].type,
+      species: data[i].species,
+      image: data[i].image,
     };
 
-    if (count >= limit) return;
-
     cards.push(clone);
-    count++;
-  });
+  }
 
   return cards;
 }

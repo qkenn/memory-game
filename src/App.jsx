@@ -7,132 +7,92 @@ import Spinner from './components/Spinner';
 import Header from './components/Header';
 import Stats from './components/Stats';
 import Card from './components/Card';
+import Intro from './components/Intro';
 
 function App() {
-  const [fetchedData, setFetchedData] = useState(null);
+  const [data, setData] = useState('');
   const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState(null);
-  const [gameData, setGameData] = useState({
-    score: 0,
-    selectedCards: [],
-  });
-  const [gameOver, setGameOver] = useState(false);
+  const [fetchErr, setFetchErr] = useState(null);
+  const [gameState, setGameState] = useState('intro');
 
   useEffect(() => {
-    // set loading and error to initial values
     setLoading(true);
-    setErr(null);
-    setFetchedData(null);
+    setFetchErr(null);
+    setData(null);
 
     const controller = new AbortController();
 
-    async function fetchData() {
+    async function fetchFromAPI() {
       try {
-        // rickandmorty api paginates 20 items per page by default
         // https://rickandmortyapi.com/api/character
+        // paginates 20 items per page by default
         const res = await fetch(`https://rickandmortyapi.com/api/character`, {
           signal: controller.signal,
         });
+        const fetchedData = await res.json();
+        console.log(fetchedData);
 
-        // manualy handle errors
-        if (res.status != 200) {
-          throw new Error('Error Fetching Data');
+        if (!res.ok) {
+          setFetchErr('Error fetching data');
         }
 
-        const data = await res.json();
-        console.log(data);
-
-        // generate cards with fetched fetchedData
-        const cards = generateCards(data.results);
-        setFetchedData(cards);
+        setData(fetchedData);
       } catch (e) {
-        // exclude manual abort
+        // exclude controller.abort() count as an error
         if (e?.name == 'AbortError') return;
 
-        setErr(e.message);
+        setFetchErr(e.message);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchData();
+    fetchFromAPI();
 
     return () => {
       controller.abort();
     };
   }, []);
 
-  function playRound(id) {
-    if (gameOver) return;
-
-    shuffleCards();
-
-    updateGame(id);
+  function handleDifficulty(value) {
+    setData(generateCards(data.results, +value));
+    setGameState('play');
   }
 
-  function updateGame(id) {
-    if (!gameData.selectedCards.includes(id)) {
-      updateGameData(id);
-    } else {
-      lose();
-    }
-  }
-
-  function updateGameData(id) {
-    setGameData((prev) => {
-      const selectedCards = [...prev.selectedCards, id];
-      return { ...prev, score: prev.score + 1, selectedCards };
-    });
-  }
-
-  function lose() {
-    // setGameData((prev) => {
-    //   return { ...prev, wins: prev.wins + 1 };
-    // });
-
-    setGameOver(true);
-  }
-
-  function replay() {
-    setGameOver(false);
-
-    setGameData((prev) => {
-      return { ...prev, score: 0, selectedCards: [] };
-    });
-  }
-
-  function shuffleCards() {
-    const shuffledArr = shuffle([...fetchedData]);
-    setFetchedData(shuffledArr);
-  }
+  const levels = [
+    { name: 'Easy', value: 8 },
+    { name: 'Medium', value: 12 },
+    { name: 'Hard', value: 16 },
+  ];
 
   return (
     <>
-      <Header gameOver={gameOver} replayHandler={replay} />
+      {gameState === 'intro' && (
+        <Intro levels={levels} handleDifficulty={handleDifficulty} />
+      )}
+      {gameState === 'play' && (
+        <>
+          <Header />
 
-      <main className="mx-auto my-10 max-w-[85rem]">
-        {loading && <Spinner />}
+          <main className="mx-auto my-10 max-w-[85rem]">
+            <>
+              {loading && <Spinner />}
+              {fetchErr && <Err message={fetchErr} />}
+              {data && (
+                <>
+                  <ul className="grid auto-rows-[minmax(10rem,_auto)] grid-cols-[repeat(auto-fit,_minmax(16rem,_1fr))] gap-20 px-5">
+                    {data.map((character) => {
+                      return <Card character={character} key={character.id} />;
+                    })}
+                  </ul>
 
-        {err && <Err message={err} />}
-
-        {fetchedData && (
-          <>
-            <ul className="grid auto-rows-[minmax(10rem,_auto)] grid-cols-[repeat(auto-fit,_minmax(16rem,_1fr))] gap-20 px-5">
-              {fetchedData.map((character) => {
-                return (
-                  <Card
-                    character={character}
-                    key={character.id}
-                    playRound={playRound}
-                  />
-                );
-              })}
-            </ul>
-
-            <Stats gameData={gameData} />
-          </>
-        )}
-      </main>
+                  <Stats />
+                </>
+              )}
+            </>
+          </main>
+        </>
+      )}
     </>
   );
 }
