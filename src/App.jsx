@@ -52,8 +52,6 @@ function App() {
           setFetchErr('Error fetching data');
         }
 
-        console.log('rerun');
-
         setData(fetchedData);
       } catch (e) {
         // exclude controller.abort() count as an error
@@ -81,18 +79,15 @@ function App() {
 
   function playGame(id) {
     setCards(shuffle(cards));
-    console.log(data);
 
     if (gameData.selectedCards.includes(id)) {
       console.log('you already selected that card');
       setGameState('gameover');
-      setGameData({ selectedCards: [], currentLevelValue: 8, score: 0 });
       return;
     }
 
     if (gameData.selectedCards.length === gameData.currentLevelValue - 1) {
       setGameState('win');
-      setGameData({ selectedCards: [], currentLevelValue: 8, score: 0 });
       return;
     }
 
@@ -104,12 +99,10 @@ function App() {
         score: prev.score * 2 + 1,
       };
     });
-
-    console.log(gameData.selectedCards.length);
-    console.log(gameData.currentLevelValue);
   }
 
-  function restart() {
+  function handleReplay() {
+    setGameData({ selectedCards: [], currentLevelValue: 8, score: 0 });
     setRefetch(true);
     setGameState('intro');
   }
@@ -125,16 +118,15 @@ function App() {
       {gameState === 'intro' && (
         <Intro levels={levels} handleDifficulty={handleDifficulty} />
       )}
-      {gameState === 'gameover' && <GameOver handleReplay={restart} />}
-      {gameState === 'win' && <Win handleReplay={restart} />}
+      {gameState === 'gameover' && <GameOver handleReplay={handleReplay} />}
+      {gameState === 'win' && <Win handleReplay={handleReplay} />}
       {(gameState === 'play' ||
         gameState === 'gameover' ||
         gameState === 'win') && (
         <>
-          <Header score={gameData.score} />
+          <Header score={gameData.score} handleReplay={handleReplay} />
 
           <MainStats
-            score={gameData.score}
             toWin={gameData.currentLevelValue - gameData.selectedCards.length}
           />
 
@@ -155,15 +147,6 @@ function App() {
                       );
                     })}
                 </ul>
-
-                {data && (
-                  <Stats
-                    score={gameData.score}
-                    toWin={
-                      gameData.currentLevelValue - gameData.selectedCards.length
-                    }
-                  />
-                )}
               </>
             </>
           </main>

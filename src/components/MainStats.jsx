@@ -1,4 +1,4 @@
-function MainStats({ score, toWin }) {
+function MainStats({ toWin }) {
   return (
     <section className="text-center text-lg">
       <p className="text-xl">
