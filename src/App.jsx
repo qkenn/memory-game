@@ -8,12 +8,17 @@ import Header from './components/Header';
 import Stats from './components/Stats';
 import Card from './components/Card';
 import Intro from './components/Intro';
+import GameOver from './components/GameOver';
 
 function App() {
-  const [data, setData] = useState('');
+  const [data, setData] = useState();
+  const [cards, setCards] = useState();
   const [loading, setLoading] = useState(true);
   const [fetchErr, setFetchErr] = useState(null);
   const [gameState, setGameState] = useState('intro');
+  const [gameData, setGameData] = useState({
+    selectedCards: [],
+  });
 
   useEffect(() => {
     setLoading(true);
@@ -55,8 +60,36 @@ function App() {
   }, []);
 
   function handleDifficulty(value) {
-    setData(generateCards(data.results, +value));
+    console.log(data);
+
+    setCards(data);
+    setCards(generateCards(data.results, +value));
     setGameState('play');
+  }
+
+  function playGame(id) {
+    setCards(shuffle(cards));
+    console.log(data);
+
+    if (gameData.selectedCards.includes(id)) {
+      console.log('you already selected that card');
+      setGameState('gameover');
+      setGameData({ selectedCards: [] });
+      return;
+    }
+
+    setGameData((prev) => {
+      const updatedSelectedCards = [...prev.selectedCards, id];
+
+      return { selectedCards: updatedSelectedCards };
+    });
+
+    console.log(gameData.selectedCards);
+  }
+
+  function replay() {
+    setGameData({ selectedCards: [] });
+    setGameState('intro');
   }
 
   const levels = [
@@ -70,7 +103,8 @@ function App() {
       {gameState === 'intro' && (
         <Intro levels={levels} handleDifficulty={handleDifficulty} />
       )}
-      {gameState === 'play' && (
+      {gameState === 'gameover' && <GameOver handleReplay={replay} />}
+      {(gameState === 'play' || gameState === 'gameover') && (
         <>
           <Header />
 
@@ -78,17 +112,21 @@ function App() {
             <>
               {loading && <Spinner />}
               {fetchErr && <Err message={fetchErr} />}
-              {data && (
-                <>
-                  <ul className="grid auto-rows-[minmax(10rem,_auto)] grid-cols-[repeat(auto-fit,_minmax(16rem,_1fr))] gap-20 px-5">
-                    {data.map((character) => {
-                      return <Card character={character} key={character.id} />;
-                    })}
-                  </ul>
+              <>
+                <ul className="grid auto-rows-[minmax(10rem,_auto)] grid-cols-[repeat(auto-fit,_minmax(16rem,_1fr))] gap-20 px-5">
+                  {cards.map((character) => {
+                    return (
+                      <Card
+                        character={character}
+                        key={character.id}
+                        handlePlayGame={playGame}
+                      />
+                    );
+                  })}
+                </ul>
 
-                  <Stats />
-                </>
-              )}
+                <Stats />
+              </>
             </>
           </main>
         </>

@@ -1,4 +1,4 @@
-function Card({ character, playRound }) {
+function Card({ character, handlePlayGame }) {
   let statusColor;
 
   // tailwind does not allow dynamic classes
@@ -19,7 +19,7 @@ function Card({ character, playRound }) {
   return (
     <li
       className="flex cursor-pointer flex-col overflow-hidden rounded-xl bg-neutral-800 text-white hover:shadow-[0_0_30px_1px_#4ade80]"
-      onClick={() => playRound(character.id)}
+      onClick={() => handlePlayGame(character.id)}
     >
       <div>
         <img src={character.image} className="h-full w-full object-cover" />
