@@ -5,13 +5,6 @@ function Header() {
         <h1 className="my-12 inline-block rounded-lg bg-neutral-800 px-10 py-2 text-5xl font-bold text-green-400">
           Memory Game
         </h1>
-        {/* <p>Game Over; You already selected that card</p>
-        <button
-          className="mt-5 rounded-xl bg-neutral-800 px-5 py-2 text-white"
-          r
-        >
-          Replay
-        </button> */}
       </header>
     </>
   );

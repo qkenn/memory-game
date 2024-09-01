@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { shuffle, generateCards, genRandomInt } from './scripts/helpers';
 import './index.css';
 
@@ -11,6 +11,8 @@ import Intro from './components/Intro';
 import GameOver from './components/GameOver';
 import Win from './components/Win';
 
+function MyComponent() {}
+
 function App() {
   const [data, setData] = useState();
   const [cards, setCards] = useState();
@@ -22,11 +24,13 @@ function App() {
     currentLevelValue: 8,
     score: 0,
   });
+  const [refetch, setRefetch] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     setFetchErr(null);
     setData(null);
+    setRefetch(false);
 
     const controller = new AbortController();
 
@@ -34,15 +38,20 @@ function App() {
       try {
         // https://rickandmortyapi.com/api/character
         // paginates 20 items per page by default
-        const res = await fetch(`https://rickandmortyapi.com/api/character`, {
-          signal: controller.signal,
-        });
+        const res = await fetch(
+          `https://rickandmortyapi.com/api/character?page=${genRandomInt()}`,
+          {
+            signal: controller.signal,
+          }
+        );
         const fetchedData = await res.json();
         console.log(fetchedData);
 
         if (!res.ok) {
           setFetchErr('Error fetching data');
         }
+
+        console.log('rerun');
 
         setData(fetchedData);
       } catch (e) {
@@ -60,9 +69,14 @@ function App() {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [refetch]);
 
   function handleDifficulty(value) {
+    if (!data) {
+      setGameState('play');
+      setFetchErr('error fetching data');
+      return;
+    }
     setCards(data);
     setCards(generateCards(data.results, +value));
     setGameState('play');
@@ -76,6 +90,7 @@ function App() {
     if (gameData.selectedCards.includes(id)) {
       console.log('you already selected that card');
       setGameState('gameover');
+      setRefetch(true);
       setGameData({ selectedCards: [], currentLevelValue: 8, score: 0 });
       return;
     }
@@ -83,6 +98,7 @@ function App() {
     if (gameData.selectedCards.length === gameData.currentLevelValue - 1) {
       setGameState('win');
       setGameData({ selectedCards: [], currentLevelValue: 8, score: 0 });
+      setRefetch(true);
       return;
     }
 
@@ -128,23 +144,26 @@ function App() {
               {fetchErr && <Err message={fetchErr} />}
               <>
                 <ul className="grid auto-rows-[minmax(10rem,_auto)] grid-cols-[repeat(auto-fit,_minmax(16rem,_1fr))] gap-20 px-5">
-                  {cards.map((character) => {
-                    return (
-                      <Card
-                        character={character}
-                        key={character.id}
-                        handlePlayGame={playGame}
-                      />
-                    );
-                  })}
+                  {data &&
+                    cards.map((character) => {
+                      return (
+                        <Card
+                          character={character}
+                          key={character.id}
+                          handlePlayGame={playGame}
+                        />
+                      );
+                    })}
                 </ul>
 
-                <Stats
-                  score={gameData.score}
-                  toWin={
-                    gameData.currentLevelValue - gameData.selectedCards.length
-                  }
-                />
+                {data && (
+                  <Stats
+                    score={gameData.score}
+                    toWin={
+                      gameData.currentLevelValue - gameData.selectedCards.length
+                    }
+                  />
+                )}
               </>
             </>
           </main>
