@@ -10,6 +10,7 @@ import Card from './components/Card';
 import Intro from './components/Intro';
 import GameOver from './components/GameOver';
 import Win from './components/Win';
+import MainStats from './components/MainStats';
 
 function MyComponent() {}
 
@@ -130,9 +131,14 @@ function App() {
         gameState === 'gameover' ||
         gameState === 'win') && (
         <>
-          <Header />
+          <Header score={gameData.score} />
 
-          <main className="mx-auto my-10 max-w-[85rem]">
+          <MainStats
+            score={gameData.score}
+            toWin={gameData.currentLevelValue - gameData.selectedCards.length}
+          />
+
+          <main className="mx-auto my-20 max-w-[85rem]">
             <>
               {loading && <Spinner />}
               {fetchErr && <Err message={fetchErr} />}
