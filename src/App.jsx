@@ -5,6 +5,7 @@ import './index.css';
 import Err from './components/Err';
 import Spinner from './components/Spinner';
 import Header from './components/Header';
+import Stats from './components/Stats';
 
 function App() {
   const [fetchedData, setFetchedData] = useState(null);
@@ -153,12 +154,12 @@ function App() {
                         {el.name}
                       </h3>
                       <p className="mt-1 flex items-center justify-center gap-2 text-sm">
-                        <span
+                        <div
                           className={`inline-block h-2 w-2 rounded-full ${statusColor}`}
-                        ></span>
-                        <span className="text-slate-300">
+                        ></div>
+                        <div className="text-slate-300">
                           {el.status} - {el.species} {el.type && `(${el.type})`}
-                        </span>
+                        </div>
                       </p>
                     </div>
                   </li>
@@ -166,9 +167,7 @@ function App() {
               })}
             </ul>
 
-            <div className="fixed bottom-10 left-1/2 -translate-x-1/2 rounded-lg bg-green-400 px-7 py-3 text-2xl font-bold">
-              Score: {gameData.score}
-            </div>
+            <Stats gameData={gameData} />
           </>
         )}
       </main>
