@@ -18,7 +18,7 @@ function Card({ character, handlePlayGame }) {
 
   return (
     <li
-      className="flex cursor-pointer flex-col overflow-hidden rounded-xl bg-neutral-800 text-white hover:shadow-[0_0_30px_1px_#4ade80]"
+      className="flex cursor-pointer flex-col overflow-hidden rounded-xl bg-neutral-800 text-white transition-shadow hover:shadow-[0_0_30px_1px_#4ade80]"
       onClick={() => handlePlayGame(character.id)}
     >
       <div>

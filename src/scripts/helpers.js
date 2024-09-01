@@ -7,7 +7,7 @@ export function shuffle(arr) {
   return arrCopy;
 }
 
-export function generateCards(data, limit = 8) {
+export function generateCards(data, limit = 4) {
   const cards = [];
 
   for (let i = 1; i <= data.length; i++) {

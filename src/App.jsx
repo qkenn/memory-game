@@ -9,6 +9,7 @@ import Stats from './components/Stats';
 import Card from './components/Card';
 import Intro from './components/Intro';
 import GameOver from './components/GameOver';
+import Win from './components/Win';
 
 function App() {
   const [data, setData] = useState();
@@ -18,6 +19,7 @@ function App() {
   const [gameState, setGameState] = useState('intro');
   const [gameData, setGameData] = useState({
     selectedCards: [],
+    currentLevelValue: 4,
   });
 
   useEffect(() => {
@@ -60,11 +62,10 @@ function App() {
   }, []);
 
   function handleDifficulty(value) {
-    console.log(data);
-
     setCards(data);
-    setCards(generateCards(data.results, +value));
+    setCards(generateCards(data.results));
     setGameState('play');
+    setGameData({ ...gameData, currentLevelValue: 4 });
   }
 
   function playGame(id) {
@@ -74,21 +75,26 @@ function App() {
     if (gameData.selectedCards.includes(id)) {
       console.log('you already selected that card');
       setGameState('gameover');
-      setGameData({ selectedCards: [] });
+      setGameData({ selectedCards: [], currentLevelValue: 8 });
+      return;
+    }
+
+    if (gameData.selectedCards.length === gameData.currentLevelValue - 1) {
+      setGameState('win');
+      setGameData({ selectedCards: [], currentLevelValue: 8 });
       return;
     }
 
     setGameData((prev) => {
       const updatedSelectedCards = [...prev.selectedCards, id];
-
-      return { selectedCards: updatedSelectedCards };
+      return { ...prev, selectedCards: updatedSelectedCards };
     });
 
-    console.log(gameData.selectedCards);
+    console.log(gameData.selectedCards.length);
+    console.log(gameData.currentLevelValue);
   }
 
-  function replay() {
-    setGameData({ selectedCards: [] });
+  function restart() {
     setGameState('intro');
   }
 
@@ -103,8 +109,11 @@ function App() {
       {gameState === 'intro' && (
         <Intro levels={levels} handleDifficulty={handleDifficulty} />
       )}
-      {gameState === 'gameover' && <GameOver handleReplay={replay} />}
-      {(gameState === 'play' || gameState === 'gameover') && (
+      {gameState === 'gameover' && <GameOver handleReplay={restart} />}
+      {gameState === 'win' && <Win handleReplay={restart} />}
+      {(gameState === 'play' ||
+        gameState === 'gameover' ||
+        gameState === 'win') && (
         <>
           <Header />
 
