@@ -3,7 +3,7 @@ function Win({ handleReplay }) {
     <section className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md backdrop-filter">
       <div className="self-center rounded-xl bg-white px-20 py-12 text-center">
         <h3 className="text-netral-800 px-10 py-2 text-center text-6xl font-bold">
-          👾 you win!
+          🏆 you win!
         </h3>
         <p className="mt-2 text-lg">you selected all the cards.</p>
         <button

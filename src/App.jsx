@@ -19,7 +19,8 @@ function App() {
   const [gameState, setGameState] = useState('intro');
   const [gameData, setGameData] = useState({
     selectedCards: [],
-    currentLevelValue: 4,
+    currentLevelValue: 8,
+    score: 0,
   });
 
   useEffect(() => {
@@ -63,9 +64,9 @@ function App() {
 
   function handleDifficulty(value) {
     setCards(data);
-    setCards(generateCards(data.results));
+    setCards(generateCards(data.results, +value));
     setGameState('play');
-    setGameData({ ...gameData, currentLevelValue: 4 });
+    setGameData({ ...gameData, currentLevelValue: +value });
   }
 
   function playGame(id) {
@@ -75,19 +76,23 @@ function App() {
     if (gameData.selectedCards.includes(id)) {
       console.log('you already selected that card');
       setGameState('gameover');
-      setGameData({ selectedCards: [], currentLevelValue: 8 });
+      setGameData({ selectedCards: [], currentLevelValue: 8, score: 0 });
       return;
     }
 
     if (gameData.selectedCards.length === gameData.currentLevelValue - 1) {
       setGameState('win');
-      setGameData({ selectedCards: [], currentLevelValue: 8 });
+      setGameData({ selectedCards: [], currentLevelValue: 8, score: 0 });
       return;
     }
 
     setGameData((prev) => {
       const updatedSelectedCards = [...prev.selectedCards, id];
-      return { ...prev, selectedCards: updatedSelectedCards };
+      return {
+        ...prev,
+        selectedCards: updatedSelectedCards,
+        score: prev.score * 2 + 1,
+      };
     });
 
     console.log(gameData.selectedCards.length);
@@ -134,7 +139,12 @@ function App() {
                   })}
                 </ul>
 
-                <Stats />
+                <Stats
+                  score={gameData.score}
+                  toWin={
+                    gameData.currentLevelValue - gameData.selectedCards.length
+                  }
+                />
               </>
             </>
           </main>
