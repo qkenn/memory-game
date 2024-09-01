@@ -109,7 +109,7 @@ function App() {
     <>
       <Header gameOver={gameOver} replayHandler={replay} />
 
-      <main className="mx-auto my-10 max-w-[90rem]">
+      <main className="mx-auto my-10 max-w-[85rem]">
         {loading && <Spinner />}
 
         {err && <Err message={err} />}
@@ -126,7 +126,7 @@ function App() {
                     statusColor = 'bg-slate-600';
                     break;
                   case 'Alive':
-                    statusColor = 'bg-blue-600';
+                    statusColor = 'bg-green-600';
                     break;
                   case 'Dead':
                     statusColor = 'bg-red-600';
@@ -138,7 +138,7 @@ function App() {
                 return (
                   <li
                     key={el.id}
-                    className="flex flex-col overflow-hidden rounded-xl bg-neutral-800 text-white"
+                    className="flex flex-col overflow-hidden rounded-xl bg-neutral-800 text-white hover:shadow-[0_0_30px_1px_#4ade80]"
                     onClick={() => playRound(el.id)}
                   >
                     <div>
@@ -149,7 +149,9 @@ function App() {
                     </div>
 
                     <div className="p-4 text-center">
-                      <h3 className="text-xl font-medium">{el.name}</h3>
+                      <h3 className="text-xl font-medium text-green-300">
+                        {el.name}
+                      </h3>
                       <p className="mt-1 flex items-center justify-center gap-2 text-sm">
                         <span
                           className={`inline-block h-2 w-2 rounded-full ${statusColor}`}
@@ -164,7 +166,7 @@ function App() {
               })}
             </ul>
 
-            <div className="fixed bottom-10 left-1/2 -translate-x-1/2 rounded-lg bg-white px-7 py-3 text-xl">
+            <div className="fixed bottom-10 left-1/2 -translate-x-1/2 rounded-lg bg-green-400 px-7 py-3 text-2xl font-bold">
               Score: {gameData.score}
             </div>
           </>
