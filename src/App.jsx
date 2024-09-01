@@ -11,6 +11,7 @@ import Intro from './components/Intro';
 import GameOver from './components/GameOver';
 import Win from './components/Win';
 import MainStats from './components/MainStats';
+import Footer from './components/Footer';
 
 function MyComponent() {}
 
@@ -54,7 +55,7 @@ function App() {
 
         setData(fetchedData);
       } catch (e) {
-        // exclude controller.abort() count as an error
+        // prevent controller.abort() count as an error
         if (e?.name == 'AbortError') return;
 
         setFetchErr(e.message);
@@ -150,6 +151,8 @@ function App() {
               </>
             </>
           </main>
+
+          <Footer />
         </>
       )}
     </>
