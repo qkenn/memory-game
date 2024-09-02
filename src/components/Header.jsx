@@ -1,4 +1,4 @@
-function Header({ score, handleReplay, highScore }) {
+function Header({ score, highScore, replayHandler }) {
   return (
     <>
       <header className="mx-auto my-12 flex max-w-[85rem] flex-col gap-5 px-5 text-center md:flex-row md:items-center md:justify-between">
@@ -24,7 +24,7 @@ function Header({ score, handleReplay, highScore }) {
 
         <button
           className="order-3 rounded-md bg-green-400 px-10 py-2 text-xl font-medium text-neutral-800 transition-colors hover:bg-neutral-800 hover:text-green-400 focus:bg-neutral-800 focus:text-green-400"
-          onClick={handleReplay}
+          onClick={replayHandler}
         >
           ↻️ Replay
         </button>

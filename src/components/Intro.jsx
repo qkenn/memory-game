@@ -1,4 +1,4 @@
-function Intro({ handleDifficulty }) {
+function Intro({ startHandler }) {
   const levels = [
     { name: 'easy', value: 8 },
     { name: 'medium', value: 12 },
@@ -25,7 +25,7 @@ function Intro({ handleDifficulty }) {
               <div key={level.name}>
                 <button
                   data-value={level.value}
-                  onClick={(e) => handleDifficulty(e.target.dataset.value)}
+                  onClick={(e) => startHandler(e.target.dataset.value)}
                   className="rounded-md bg-green-400 px-10 py-2 text-xl font-medium text-neutral-800 transition-colors hover:bg-neutral-800 hover:text-green-400 focus:bg-neutral-800 focus:text-green-400"
                 >
                   {level.name}

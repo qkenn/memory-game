@@ -1,4 +1,4 @@
-function GameOver({ handleReplay, gameResult }) {
+function GameOver({ replayHandler, gameResult }) {
   let result;
   let resultText;
   if (gameResult === 'win') {
@@ -20,7 +20,7 @@ function GameOver({ handleReplay, gameResult }) {
         <p className="mt-3 text-lg">{resultText}</p>
         <button
           className="mt-16 rounded-md bg-green-400 px-10 py-2 text-xl font-medium text-neutral-800 transition-colors hover:bg-neutral-800 hover:text-green-400 focus:bg-neutral-800 focus:text-green-400"
-          onClick={handleReplay}
+          onClick={replayHandler}
         >
           ↻️ Replay
         </button>

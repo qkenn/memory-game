@@ -1,19 +1,20 @@
 import Spinner from './Spinner';
 import Card from './Card';
+import Err from './Err';
 
-function Main({ loading, fetchErr, data, cards, playGame }) {
+function Main({ isLoading, isFetchErr, cards, playRoundHandler }) {
   return (
     <main className="mx-auto my-20 max-w-[85rem]">
-      {loading && <Spinner />}
-      {fetchErr && <Err message={fetchErr} />}
+      {isLoading && <Spinner />}
+      {isFetchErr && <Err message={isFetchErr} />}
       <ul className="grid auto-rows-[minmax(10rem,_auto)] grid-cols-[repeat(auto-fit,_minmax(16rem,_1fr))] gap-20 px-5">
-        {data &&
+        {!isLoading &&
           cards.map((character) => {
             return (
               <Card
                 character={character}
                 key={character.id}
-                handlePlayGame={playGame}
+                playRoundHandler={playRoundHandler}
               />
             );
           })}

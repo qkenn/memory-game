@@ -11,18 +11,18 @@ import GameOver from './components/GameOver';
 import Main from './components/Main';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import MainStats from './components/MainStats';
+import GameStats from './components/GameStats';
 
 function App() {
   const [fetchedData, setFetchedData] = useState();
-  const [cards, setCards] = useState();
+  const [cards, setCards] = useState(null);
   const [loading, setLoading] = useState(true);
   const [fetchErr, setFetchErr] = useState(null);
   const [gameState, setGameState] = useState('intro');
   const [refetch, setRefetch] = useState(false);
   const [gameData, setGameData] = useState({
     selectedCards: [],
-    currentLevelValue: 8,
+    currentLevelValue: 0,
     score: 0,
     highScore: 0,
   });
@@ -38,7 +38,8 @@ function App() {
     async function fetchFromAPI() {
       try {
         // https://rickandmortyapi.com/api/character
-        // paginates 20 items per page by default
+        // api responds with 20 characters per page
+        // get random page with every refetch
         const res = await fetch(
           `https://rickandmortyapi.com/api/character?page=${generateRandomInt()}`,
           {
@@ -49,7 +50,7 @@ function App() {
         console.log(data);
 
         if (!res.ok) {
-          setFetchErr('Error fetching fetchedData');
+          setFetchErr('Error fetching data');
         }
 
         setFetchedData(data);
@@ -70,28 +71,35 @@ function App() {
     };
   }, [refetch]);
 
-  function handleDifficulty(value) {
-    if (!fetchedData) return;
+  function startGame(levelValue) {
+    // escape fetch error
+    if (fetchErr) {
+      window.alert('NetworkError when attempting to fetch resource.');
+      return;
+    }
 
-    setCards(generateCards(fetchedData.results, +value));
+    setCards(generateCards(fetchedData.results, +levelValue));
+    setGameData({ ...gameData, currentLevelValue: +levelValue });
     setGameState('play');
-    setGameData({ ...gameData, currentLevelValue: +value });
   }
 
-  function playGame(id) {
+  function playRound(id) {
     setCards(shuffleValues(cards));
 
+    // game losing branch
     if (gameData.selectedCards.includes(id)) {
-      console.log('you already selected that card');
       setGameState('lose');
       return;
     }
 
+    // game winning branch
     if (gameData.selectedCards.length === gameData.currentLevelValue - 1) {
       setGameState('win');
       return;
     }
 
+    // niether win nor lose
+    // safely update game data
     setGameData((prev) => {
       const updatedSelectedCards = [...prev.selectedCards, id];
       return {
@@ -102,49 +110,61 @@ function App() {
     });
   }
 
-  function handleReplay() {
+  function replayGame() {
+    // escape fetch error
+    if (fetchErr) {
+      window.alert('NetworkError when attempting to fetch resource.');
+      return;
+    }
+
+    // set highscore
+    // set other game data to default values
     setGameData((prev) => {
       return {
         selectedCards: [],
-        currentLevelValue: 8,
+        currentLevelValue: 0,
         score: 0,
         highScore:
           prev.highScore > gameData.score ? prev.highScore : gameData.score,
       };
     });
+
+    // refetch cards when replaying
     setRefetch(true);
+
+    // bring back intro page
     setGameState('intro');
   }
 
   const props = {
     intro: {
-      handleDifficulty: handleDifficulty,
+      startHandler: startGame,
     },
     gameOver: {
       win: {
-        handleReplay: handleReplay,
+        replayHandler: replayGame,
         gameResult: 'win',
       },
       lose: {
-        handleReplay: handleReplay,
+        replayHandler: replayGame,
         gameResult: 'lose',
       },
     },
     header: {
       score: gameData.score,
       highScore: gameData.highScore,
-      handleReplay: handleReplay,
+      replayHandler: replayGame,
     },
-    mainStats: {
-      toWin: gameData.currentLevelValue - gameData.selectedCards.length,
+    gameStats: {
+      cardsLeftToWin:
+        gameData.currentLevelValue - gameData.selectedCards.length,
     },
     main: {
-      loading: loading,
-      fetchErr: fetchErr,
+      isLoading: loading,
+      isFetchErr: fetchErr,
       fetchedData: fetchedData,
       cards: cards,
-      playGame: playGame,
-      data: fetchedData,
+      playRoundHandler: playRound,
     },
   };
 
@@ -154,7 +174,7 @@ function App() {
       {gameState === 'lose' && <GameOver {...props.gameOver.lose} />}
       {gameState === 'win' && <GameOver {...props.gameOver.win} />}
       {gameState !== 'intro' && <Header {...props.header} />}
-      {gameState !== 'intro' && <MainStats {...props.mainStats} />}
+      {gameState !== 'intro' && <GameStats {...props.gameStats} />}
       {gameState !== 'intro' && <Main {...props.main} />}
       {gameState !== 'intro' && <Footer />}
     </>

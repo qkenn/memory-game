@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function Card({ character, handlePlayGame }) {
+function Card({ character, playRoundHandler }) {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   let statusColor;
@@ -23,7 +23,7 @@ function Card({ character, handlePlayGame }) {
   return (
     <li
       className="flex cursor-pointer flex-col self-start overflow-hidden rounded-xl bg-neutral-800 text-white transition-shadow hover:shadow-[0_0_30px_1px_#4ade80]"
-      onClick={() => handlePlayGame(character.id)}
+      onClick={() => playRoundHandler(character.id)}
     >
       <div>
         <img
