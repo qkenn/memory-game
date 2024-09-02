@@ -1,4 +1,4 @@
-export function shuffle(arr) {
+export function shuffleValues(arr) {
   const arrCopy = [...arr];
   for (let i = arrCopy.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -28,6 +28,6 @@ export function generateCards(data, limit = 8) {
   return cards;
 }
 
-export function genRandomInt(min = 1, max = 40) {
+export function generateRandomInt(min = 1, max = 40) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }

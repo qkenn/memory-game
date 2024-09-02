@@ -2,7 +2,7 @@ function GameOver({ handleReplay, gameResult }) {
   let result;
   let resultText;
   if (gameResult === 'win') {
-    result = '🏆 You Win!';
+    result = '🎉 You Win!';
     resultText = 'you selected all the cards.';
   }
 
@@ -14,7 +14,7 @@ function GameOver({ handleReplay, gameResult }) {
   return (
     <section className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md backdrop-filter">
       <div className="self-center rounded-xl bg-white px-20 py-12 text-center">
-        <h3 className="text-netral-800 px-10 py-2 text-center text-6xl font-bold">
+        <h3 className="text-netral-800 px-10 py-2 text-center font-[cave-story] text-7xl font-bold">
           {result}
         </h3>
         <p className="mt-3 text-lg">{resultText}</p>
