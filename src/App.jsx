@@ -4,7 +4,6 @@ import './index.css';
 
 import Intro from './components/Intro';
 import GameOver from './components/GameOver';
-import Win from './components/Win';
 import Main from './components/Main';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -16,12 +15,12 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [fetchErr, setFetchErr] = useState(null);
   const [gameState, setGameState] = useState('intro');
+  const [refetch, setRefetch] = useState(false);
   const [gameData, setGameData] = useState({
     selectedCards: [],
     currentLevelValue: 8,
     score: 0,
   });
-  const [refetch, setRefetch] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -80,7 +79,7 @@ function App() {
 
     if (gameData.selectedCards.includes(id)) {
       console.log('you already selected that card');
-      setGameState('gameover');
+      setGameState('lose');
       return;
     }
 
@@ -110,10 +109,14 @@ function App() {
       handleDifficulty: handleDifficulty,
     },
     gameOver: {
-      handleReplay: handleReplay,
-    },
-    win: {
-      handleReplay: handleReplay,
+      win: {
+        handleReplay: handleReplay,
+        gameResult: 'win',
+      },
+      lose: {
+        handleReplay: handleReplay,
+        gameResult: 'lose',
+      },
     },
     header: {
       score: gameData.score,
@@ -134,8 +137,8 @@ function App() {
   return (
     <>
       {gameState === 'intro' && <Intro {...props.intro} />}
-      {gameState === 'gameover' && <GameOver {...props.gameOver} />}
-      {gameState === 'win' && <Win {...props.win} />}
+      {gameState === 'lose' && <GameOver {...props.gameOver.lose} />}
+      {gameState === 'win' && <GameOver {...props.gameOver.win} />}
       {gameState !== 'intro' && <Header {...props.header} />}
       {gameState !== 'intro' && <MainStats {...props.mainStats} />}
       {gameState !== 'intro' && <Main {...props.main} />}
