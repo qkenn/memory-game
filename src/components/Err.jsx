@@ -1,6 +1,6 @@
 function Err({ message }) {
   return (
-    <div className="flex h-[80vh] flex-col items-center justify-center gap-3">
+    <div className="flex h-[70vh] flex-col items-center justify-center gap-3">
       <div>
         <svg
           xmlns="http://www.w3.org/2000/svg"

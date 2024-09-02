@@ -50,7 +50,7 @@ function App() {
         console.log(data);
 
         if (!res.ok) {
-          setFetchErr('Error fetching data');
+          throw new Error('Error fetching data');
         }
 
         setFetchedData(data);
@@ -72,15 +72,15 @@ function App() {
   }, [refetch]);
 
   function startGame(levelValue) {
-    // escape fetch error
-    if (fetchErr) {
-      window.alert('NetworkError when attempting to fetch resource.');
-      return;
+    if (!loading) {
+      setGameState('play');
     }
 
-    setCards(generateCards(fetchedData.results, +levelValue));
     setGameData({ ...gameData, currentLevelValue: +levelValue });
-    setGameState('play');
+
+    if (!fetchedData) return;
+
+    setCards(generateCards(fetchedData.results, +levelValue));
   }
 
   function playRound(id) {
@@ -111,12 +111,6 @@ function App() {
   }
 
   function replayGame() {
-    // escape fetch error
-    if (fetchErr) {
-      window.alert('NetworkError when attempting to fetch resource.');
-      return;
-    }
-
     // set highscore
     // set other game data to default values
     setGameData((prev) => {
