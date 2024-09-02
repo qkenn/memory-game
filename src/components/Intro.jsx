@@ -1,4 +1,10 @@
-function Intro({ levels, handleDifficulty }) {
+function Intro({ handleDifficulty }) {
+  const levels = [
+    { name: 'Easy', value: 8 },
+    { name: 'Medium', value: 12 },
+    { name: 'Hard', value: 16 },
+  ];
+
   return (
     <section className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md backdrop-filter">
       <div className="self-center rounded-xl bg-white px-20 py-12">

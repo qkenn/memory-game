@@ -1,19 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { shuffle, generateCards, genRandomInt } from './scripts/helpers';
 import './index.css';
 
-import Err from './components/Err';
-import Spinner from './components/Spinner';
-import Header from './components/Header';
-import Stats from './components/Stats';
-import Card from './components/Card';
 import Intro from './components/Intro';
 import GameOver from './components/GameOver';
 import Win from './components/Win';
-import MainStats from './components/MainStats';
+import Main from './components/Main';
+import Header from './components/Header';
 import Footer from './components/Footer';
-
-function MyComponent() {}
+import MainStats from './components/MainStats';
 
 function App() {
   const [data, setData] = useState();
@@ -72,6 +67,8 @@ function App() {
   }, [refetch]);
 
   function handleDifficulty(value) {
+    if (!data) return;
+
     setCards(data);
     setCards(generateCards(data.results, +value));
     setGameState('play');
@@ -108,53 +105,41 @@ function App() {
     setGameState('intro');
   }
 
-  const levels = [
-    { name: 'Easy', value: 8 },
-    { name: 'Medium', value: 12 },
-    { name: 'Hard', value: 16 },
-  ];
+  const props = {
+    intro: {
+      handleDifficulty: handleDifficulty,
+    },
+    gameOver: {
+      handleReplay: handleReplay,
+    },
+    win: {
+      handleReplay: handleReplay,
+    },
+    header: {
+      score: gameData.score,
+      handleReplay: handleReplay,
+    },
+    mainStats: {
+      toWin: gameData.currentLevelValue - gameData.selectedCards.length,
+    },
+    main: {
+      loading: loading,
+      fetchErr: fetchErr,
+      data: data,
+      cards: cards,
+      playGame: playGame,
+    },
+  };
 
   return (
     <>
-      {gameState === 'intro' && (
-        <Intro levels={levels} handleDifficulty={handleDifficulty} />
-      )}
-      {gameState === 'gameover' && <GameOver handleReplay={handleReplay} />}
-      {gameState === 'win' && <Win handleReplay={handleReplay} />}
-      {(gameState === 'play' ||
-        gameState === 'gameover' ||
-        gameState === 'win') && (
-        <>
-          <Header score={gameData.score} handleReplay={handleReplay} />
-
-          <MainStats
-            toWin={gameData.currentLevelValue - gameData.selectedCards.length}
-          />
-
-          <main className="mx-auto my-20 max-w-[85rem]">
-            <>
-              {loading && <Spinner />}
-              {fetchErr && <Err message={fetchErr} />}
-              <>
-                <ul className="grid auto-rows-[minmax(10rem,_auto)] grid-cols-[repeat(auto-fit,_minmax(16rem,_1fr))] gap-20 px-5">
-                  {data &&
-                    cards.map((character) => {
-                      return (
-                        <Card
-                          character={character}
-                          key={character.id}
-                          handlePlayGame={playGame}
-                        />
-                      );
-                    })}
-                </ul>
-              </>
-            </>
-          </main>
-
-          <Footer />
-        </>
-      )}
+      {gameState === 'intro' && <Intro {...props.intro} />}
+      {gameState === 'gameover' && <GameOver {...props.gameOver} />}
+      {gameState === 'win' && <Win {...props.win} />}
+      {gameState !== 'intro' && <Header {...props.header} />}
+      {gameState !== 'intro' && <MainStats {...props.mainStats} />}
+      {gameState !== 'intro' && <Main {...props.main} />}
+      {gameState !== 'intro' && <Footer />}
     </>
   );
 }
