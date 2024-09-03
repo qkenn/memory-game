@@ -8,18 +8,20 @@ export function shuffleValues(arr) {
 }
 
 export function generateCards(data, limit = 8) {
+  // shuffle fetched data before use
+  const shuffledData = shuffleValues(data);
   const cards = [];
 
   for (let i = 1; i <= data.length; i++) {
     if (i > limit) break;
 
     const clone = {
-      id: data[i].id,
-      name: data[i].name,
-      status: data[i].status,
-      type: data[i].type,
-      species: data[i].species,
-      image: data[i].image,
+      id: shuffledData[i].id,
+      name: shuffledData[i].name,
+      status: shuffledData[i].status,
+      type: shuffledData[i].type,
+      species: shuffledData[i].species,
+      image: shuffledData[i].image,
     };
 
     cards.push(clone);
