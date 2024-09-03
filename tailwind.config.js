@@ -11,6 +11,9 @@ export default {
         greenish: '0 0 10px 1px #bfde42',
         blueish: '0 0 30px 1px #42b4ca',
       },
+      fontFamily: {
+        WubbaLubbaDubDub: ['WubbaLubbaDubDub', 'system ui', 'sans-serif'],
+      },
     },
   },
   plugins: [],
