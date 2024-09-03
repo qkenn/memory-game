@@ -25,7 +25,7 @@ function Card({ character, playRoundHandler }) {
       className="flex cursor-pointer flex-col self-start overflow-hidden rounded-xl bg-neutral-800 text-white transition-shadow hover:shadow-[0_0_30px_1px_#4ade80]"
       onClick={() => playRoundHandler(character.id)}
     >
-      <div>
+      <div className="min-h-[270px]">
         <img
           src={character.image}
           className={`h-full w-full object-cover transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
