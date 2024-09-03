@@ -22,7 +22,7 @@ function Card({ character, playRoundHandler }) {
 
   return (
     <li
-      className="flex cursor-pointer flex-col self-start overflow-hidden rounded-xl bg-neutral-800 text-white transition-shadow hover:shadow-[0_0_30px_1px_#4ade80]"
+      className="hover:shadow-blueish flex cursor-pointer flex-col self-start overflow-hidden rounded-xl bg-neutral-800 text-white transition-shadow"
       onClick={() => playRoundHandler(character.id)}
     >
       <div className="min-h-[270px]">

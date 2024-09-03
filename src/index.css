@@ -3,6 +3,24 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'cave-story';
-  src: url('/Cave-Story.ttf');
+  font-family: 'WubbaLubbaDubDub';
+  src:
+    url('/WubbaLubbaDubDub.ttf') format('truetype'),
+    url('/WubbaLubbaDubDub.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@layer utilities {
+  .text-stroke {
+    text-shadow:
+      -3px 0 #193840,
+      3px 0 #193840,
+      0 -3px #193840,
+      0 3px #193840,
+      -8px 0 #bfde42,
+      8px 0 #bfde42,
+      0 -8px #bfde42,
+      0 8px #bfde42;
+  }
 }
