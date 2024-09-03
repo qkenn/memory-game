@@ -14,12 +14,10 @@ import Footer from './components/Footer';
 import GameStats from './components/GameStats';
 
 function App() {
-  const [fetchedData, setFetchedData] = useState();
   const [cards, setCards] = useState(null);
   const [loading, setLoading] = useState(true);
   const [fetchErr, setFetchErr] = useState(null);
   const [gameState, setGameState] = useState('intro');
-  const [refetch, setRefetch] = useState(false);
   const [gameData, setGameData] = useState({
     selectedCards: [],
     currentLevelValue: 0,
@@ -30,8 +28,7 @@ function App() {
   useEffect(() => {
     setLoading(true);
     setFetchErr(null);
-    setFetchedData(null);
-    setRefetch(false);
+    setCards(null);
 
     const controller = new AbortController();
 
@@ -53,7 +50,7 @@ function App() {
           throw new Error('Error fetching data');
         }
 
-        setFetchedData(data);
+        setCards([...generateCards(data.results, gameData.currentLevelValue)]);
       } catch (e) {
         // prevent controller.abort() count as an error
         if (e?.name == 'AbortError') return;
@@ -69,18 +66,12 @@ function App() {
     return () => {
       controller.abort();
     };
-  }, [refetch]);
+  }, [gameState]);
 
   function startGame(levelValue) {
-    if (!loading) {
-      setGameState('play');
-    }
-
     setGameData({ ...gameData, currentLevelValue: +levelValue });
 
-    if (!fetchedData) return;
-
-    setCards(generateCards(fetchedData.results, +levelValue));
+    setGameState('play');
   }
 
   function playRound(id) {
@@ -123,10 +114,7 @@ function App() {
       };
     });
 
-    // refetch cards when replaying
-    setRefetch(true);
-
-    // bring back intro page
+    // bring back intro page and refetch cards
     setGameState('intro');
   }
 
@@ -156,7 +144,6 @@ function App() {
     main: {
       isLoading: loading,
       isFetchErr: fetchErr,
-      fetchedData: fetchedData,
       cards: cards,
       playRoundHandler: playRound,
     },
