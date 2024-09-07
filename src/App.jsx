@@ -13,17 +13,19 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import GameStats from './components/GameStats';
 
+const INITIAL_GAME_DATA = {
+  selectedCards: [],
+  currentLevelValue: 0,
+  score: 0,
+  highScore: 0,
+};
+
 function App() {
   const [cards, setCards] = useState(null);
   const [loading, setLoading] = useState(true);
   const [fetchErr, setFetchErr] = useState(null);
   const [gameState, setGameState] = useState('intro');
-  const [gameData, setGameData] = useState({
-    selectedCards: [],
-    currentLevelValue: 0,
-    score: 0,
-    highScore: 0,
-  });
+  const [gameData, setGameData] = useState(INITIAL_GAME_DATA);
 
   useEffect(() => {
     setLoading(true);
@@ -106,9 +108,7 @@ function App() {
     // set other game data to default values
     setGameData((prev) => {
       return {
-        selectedCards: [],
-        currentLevelValue: 0,
-        score: 0,
+        ...INITIAL_GAME_DATA,
         highScore:
           prev.highScore > gameData.score ? prev.highScore : gameData.score,
       };
