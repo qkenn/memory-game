@@ -3,7 +3,7 @@ import {
   shuffleValues,
   generateCards,
   generateRandomInt,
-} from './scripts/helpers';
+} from './utils/helpers';
 import './index.css';
 
 import Intro from './components/Intro';

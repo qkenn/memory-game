@@ -1,3 +1,4 @@
+// fisher-yates shuffle algorithm
 export function shuffleValues(arr) {
   const arrCopy = [...arr];
   for (let i = arrCopy.length - 1; i > 0; i--) {
