@@ -1,12 +1,12 @@
 import SiteTitle from './SiteTitle';
 
-function Intro({ startHandler }) {
-  const levels = [
-    { name: 'easy', value: 8 },
-    { name: 'medium', value: 12 },
-    { name: 'hard', value: 16 },
-  ];
+const LEVELS = [
+  { name: 'easy', value: 8 },
+  { name: 'medium', value: 12 },
+  { name: 'hard', value: 16 },
+];
 
+function Intro({ startHandler }) {
   return (
     <section className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md backdrop-filter">
       <div className="self-center rounded-xl bg-white px-20 py-12">
@@ -20,13 +20,13 @@ function Intro({ startHandler }) {
           </div>
         </div>
         <div className="mt-16 flex items-center justify-center gap-5">
-          {levels.map((level) => {
+          {LEVELS.map((level) => {
             return (
               <div key={level.name}>
                 <button
                   data-value={level.value}
                   onClick={(e) => startHandler(e.target.dataset.value)}
-                  className="hover:shadow-greenish focus:shadow-small rounded-md bg-green-400 px-10 py-2 text-xl font-medium text-neutral-800 transition-shadow"
+                  className="focus:shadow-small rounded-md bg-green-400 px-10 py-2 text-xl font-medium text-neutral-800 transition-shadow hover:shadow-greenish"
                 >
                   {level.name}
                 </button>

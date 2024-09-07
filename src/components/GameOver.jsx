@@ -1,4 +1,16 @@
+import { useEffect, useState } from 'react';
+
 function GameOver({ replayHandler, gameResult }) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+
+    return () => {
+      setIsMounted(false);
+    };
+  }, []);
+
   let emoji;
   let result;
   let resultText;
@@ -15,7 +27,9 @@ function GameOver({ replayHandler, gameResult }) {
   }
 
   return (
-    <section className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md backdrop-filter">
+    <section
+      className={`fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md backdrop-filter transition-opacity duration-500 ${isMounted ? 'opacity-100' : 'opacity-0'}`}
+    >
       <div className="self-center rounded-xl bg-white px-20 py-12 text-center">
         <h3 className="text-7xl">
           <span>{emoji}</span>
@@ -25,7 +39,7 @@ function GameOver({ replayHandler, gameResult }) {
         </h3>
         <p className="mt-5 text-lg">{resultText}</p>
         <button
-          className="hover:shadow-greenish focus:shadow-greenish order-3 mt-16 rounded-md bg-green-400 px-10 py-2 text-xl font-medium text-neutral-800 transition-shadow"
+          className="order-3 mt-16 rounded-md bg-green-400 px-10 py-2 text-xl font-medium text-neutral-800 transition-shadow hover:shadow-greenish focus:shadow-greenish"
           onClick={replayHandler}
         >
           ↻️ Replay
