@@ -1,10 +1,5 @@
+import DifficultyBtn from './DifficultyBtn';
 import SiteTitle from './SiteTitle';
-
-const LEVELS = [
-  { name: 'easy', value: 8 },
-  { name: 'medium', value: 12 },
-  { name: 'hard', value: 16 },
-];
 
 function Intro({ startHandler }) {
   return (
@@ -20,21 +15,21 @@ function Intro({ startHandler }) {
           </div>
         </div>
         <div className="mt-16 flex items-center justify-center gap-5">
-          {LEVELS.map((level) => {
-            return (
-              <div key={level.name}>
-                <button
-                  data-value={level.value}
-                  onClick={(e) => startHandler(e.target.dataset.value)}
-                  className="focus:shadow-small rounded-md bg-green-400 px-10 py-2 text-xl font-medium text-neutral-800 transition-shadow hover:shadow-greenish"
-                >
-                  {level.name}
-                </button>
-
-                <p className="pt-2 text-center">{level.value} cards</p>
-              </div>
-            );
-          })}
+          <DifficultyBtn
+            levelName="Easy"
+            levelValue={8}
+            startHandler={startHandler}
+          />
+          <DifficultyBtn
+            levelName="Medium"
+            levelValue={12}
+            startHandler={startHandler}
+          />
+          <DifficultyBtn
+            levelName="Hard"
+            levelValue={16}
+            startHandler={startHandler}
+          />
         </div>
       </div>
     </section>
